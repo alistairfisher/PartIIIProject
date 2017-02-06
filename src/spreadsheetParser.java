@@ -27,6 +27,7 @@ public class spreadsheetParser {
 
             //Iterate through each rows one by one
             Iterator<Row> rowIterator = sheet.iterator();
+            rowIterator.next(); //skip headings row
             while (rowIterator.hasNext()) {
                 Row row = rowIterator.next();
                 try {
@@ -67,12 +68,19 @@ public class spreadsheetParser {
                 e.title = c.getStringCellValue();
                 break;
             case 3:
-                e.eventSentence = c.getStringCellValue();
+                e.labels.eventSentence = c.getStringCellValue();
+                break;
+            case 4:
+                e.labels.bestGeolocation = c.getStringCellValue();
+                break;
+            case 7:
+                e.labels.bestGeopoint = parseGeopoint(c.getStringCellValue());
+            case 8:
+                e.labels.country = c.getStringCellValue();
                 break;
             case 12:
                 try {
                     e.article = c.getStringCellValue();
-                    //System.out.println(c.getStringCellValue());
                 }
                 catch (IllegalStateException ex) {
                     throw new NoArticleException(c.getRowIndex());
@@ -83,6 +91,14 @@ public class spreadsheetParser {
             default:
                 break;
         }
+    }
+
+    static Geopoint parseGeopoint(String s) { //input is a string of the form "(double,double)"
+        String noBrackets = s.substring(1,s.length()-2);
+        String[] coords = noBrackets.split(",");
+        Double longitude = Double.parseDouble(coords[0]);
+        Double latitude = Double.parseDouble(coords[1]);
+        return new Geopoint(longitude,latitude);
     }
 
 }
