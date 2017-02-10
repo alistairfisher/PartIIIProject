@@ -1,12 +1,11 @@
 /**
  * Created by alistair on 04/02/2017.
  */
-public class NoArticleException extends Exception {
+class NoArticleException extends Exception {
 
     int rowNumber;
 
-    NoArticleException(int rowNumber) {
-        rowNumber = rowNumber;
+    public NoArticleException(int rowNumber) {
+        this.rowNumber = rowNumber;
     }
-
 }
