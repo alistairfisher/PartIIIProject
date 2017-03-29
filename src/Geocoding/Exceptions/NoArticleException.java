@@ -1,9 +1,11 @@
+package Geocoding.Exceptions;
+
 /**
  * Created by alistair on 04/02/2017.
  */
-class NoArticleException extends Exception {
+public class NoArticleException extends Exception {
 
-    int rowNumber;
+    public int rowNumber;
 
     public NoArticleException(int rowNumber) {
         this.rowNumber = rowNumber;

@@ -1,3 +1,8 @@
+package Geocoding.APIInterfaces;
+
+import Geocoding.Keys;
+import com.google.gson.Gson;
+
 import java.io.BufferedReader;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -5,20 +10,19 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 
 /**
- * Created by alistair on 27/01/2017.
+ * Created by alistair on 04/02/2017.
  */
-public abstract class PlacesAPIInterface {
+abstract class APIInterface {
 
-    abstract Location[] lookuplocation (String name);
+    static final String APIKey = Keys.placesAPIKey2;
 
-    static final String APIKey = Keys.placesAPIKey;
+     static <T> T responseFromJSON(String json, Class<T> c){
+        Gson gson = new Gson();
+        return gson.fromJson(json,c);
+    }
 
-    static final String urlPref =  "https://maps.googleapis.com/maps/api/place/autocomplete/json?key="+APIKey+"&types=(cities)&input=";
-
-    abstract String composeRequest(String name);
-
-    static void makeRequest(String name) throws Exception {
-        URL url = new URL((urlPref+name));
+    static String makeRequest(String input, String urlString) throws Exception {
+        URL url = new URL((urlString+input));
         HttpURLConnection connection = (HttpURLConnection) url.openConnection();
         connection.setRequestMethod("GET");
         InputStream is = connection.getInputStream();
@@ -31,9 +35,7 @@ public abstract class PlacesAPIInterface {
             response.append('\n');
         }
         rd.close();
-        System.out.println(response.toString());
-
-
+        return response.toString();
     }
 
 }

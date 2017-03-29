@@ -1,3 +1,5 @@
+package Geocoding.NER;
+
 import edu.stanford.nlp.ling.CoreAnnotations;
 import edu.stanford.nlp.ling.CoreLabel;
 
@@ -5,9 +7,11 @@ import edu.stanford.nlp.ling.CoreLabel;
  * Created by alistair on 27/01/2017.
  */
 public class NamedEntity {
-    final String name;
 
-    public NamedEntity(String name, String tag) {
+    public String name;
+    NERTag tag;
+
+    private NamedEntity(String name, String tag) {
         this.name = name;
         this.tag = NERTag.valueOf(tag);
     }
@@ -16,5 +20,4 @@ public class NamedEntity {
         return new NamedEntity(loc,label.get(CoreAnnotations.AnswerAnnotation.class));
     }
 
-    final NERTag tag;
 }

@@ -1,31 +1,25 @@
-/**
+package Geocoding.NER; /**
  * Created by alistair on 27/01/2017.
  */
 
 import edu.stanford.nlp.ie.AbstractSequenceClassifier;
-import edu.stanford.nlp.ie.crf.*;
-import edu.stanford.nlp.io.IOUtils;
-import edu.stanford.nlp.ling.CoreLabel;
+import edu.stanford.nlp.ie.crf.CRFClassifier;
 import edu.stanford.nlp.ling.CoreAnnotations;
-import edu.stanford.nlp.sequences.DocumentReaderAndWriter;
-import edu.stanford.nlp.util.Triple;
+import edu.stanford.nlp.ling.CoreLabel;
 
-import java.util.HashSet;
+import java.util.ArrayList;
 import java.util.List;
-
-import java.io.IOException;
-import java.util.Set;
 
 
 public class NER {
 
-    final static AbstractSequenceClassifier<CoreLabel> getClassifier() throws Exception {
+    private static AbstractSequenceClassifier<CoreLabel> getClassifier() throws Exception {
         return CRFClassifier.getClassifier("/Users/alistair/Documents/DissResources/stanford-ner-2016-10-31/classifiers/english.all.3class.distsim.crf.ser.gz");
     }
 
-    static Set<NamedEntity> classify(String s) throws Exception {
+    private static ArrayList<NamedEntity> classify(String s) throws Exception {
         List<List<CoreLabel>> out = getClassifier().classify(s);
-        Set result = new HashSet<NamedEntity>();
+        ArrayList result = new ArrayList<NamedEntity>();
         for (List<CoreLabel> sentence : out) {
             CoreLabel previous = null;
             String loc = null;
@@ -37,7 +31,6 @@ public class NER {
                             loc += (' ' + word.word());
                         }
                         else {
-                            print(loc,previous);
                             result.add(NamedEntity.formNamedEntity(loc,previous));
                             loc = word.word();
                         }
@@ -50,21 +43,28 @@ public class NER {
                 else {
                     if (previous != null) {
                         result.add(NamedEntity.formNamedEntity(loc,previous));
-                        print(loc,previous);
                     }
                     previous = null;
                     loc = null;
                 }
             }
-            System.out.println();
         }
         return result;
     }
 
-    static void print(String loc, CoreLabel label) {
+    public static ArrayList<NamedEntity> getLocations(String s) throws Exception {
+        ArrayList<NamedEntity> entities = classify(s);
+        ArrayList<NamedEntity> result = new ArrayList<>();
+        for (NamedEntity e: entities) {
+            if (e.tag.equals(NERTag.LOCATION)) {
+                result.add(e);
+            }
+        }
+        return result;
+    }
+
+    private static void print(String loc, CoreLabel label) {
         System.out.print(loc + '/' + label.get(CoreAnnotations.AnswerAnnotation.class) + '\n');
     }
 
-    public NER() throws IOException, ClassNotFoundException {
-    }
 }

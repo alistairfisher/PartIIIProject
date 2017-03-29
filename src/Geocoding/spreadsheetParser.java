@@ -1,4 +1,6 @@
+package Geocoding;
 
+import Geocoding.Exceptions.NoArticleException;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
@@ -12,10 +14,11 @@ import java.util.Iterator;
 /**
  * Created by alistair on 03/02/2017.
  */
-public class spreadsheetParser {
+class spreadsheetParser {
 
      static ArrayList<Example> parseFile() {
          ArrayList<Example> result = new ArrayList();
+         ArrayList<Integer> badLines = new ArrayList<>();
          try {
             FileInputStream file = new FileInputStream(new File("/Users/alistair/Documents/DissResources/data.xlsx"));
 
@@ -25,16 +28,29 @@ public class spreadsheetParser {
             //Get first/desired sheet from the workbook
             XSSFSheet sheet = workbook.getSheetAt(0);
 
-            //Iterate through each rows one by one
+            //Iterate through each row one by one
             Iterator<Row> rowIterator = sheet.iterator();
             rowIterator.next(); //skip headings row
             while (rowIterator.hasNext()) {
                 Row row = rowIterator.next();
+                boolean fireRow;
                 try {
-                    Example example = parseRow(row);
-                    result.add(example);
+                    fireRow = row.getCell(19).getStringCellValue().equals("fire");
                 }
-                catch (NoArticleException e){}
+                catch (IllegalStateException e) {
+                    fireRow = false;
+                }
+                if (fireRow) {
+                    try {
+                        Example example = parseRow(row);
+                        if (example.articles.size()>0) { //filter rows with no articles (there are around 4)
+                            result.add(example);
+                        }
+                    }
+                    catch (NoArticleException e){
+                        badLines.add(e.rowNumber);
+                    }
+                }
             }
             file.close();
         }
@@ -46,7 +62,7 @@ public class spreadsheetParser {
         return result;
     }
 
-    static Example parseRow(Row row) throws NoArticleException {
+    private static Example parseRow(Row row) throws NoArticleException {
         Example result = new Example();
         Iterator<Cell> cellIterator = row.cellIterator();
         while (cellIterator.hasNext()) {
@@ -56,13 +72,10 @@ public class spreadsheetParser {
         return result;
     }
 
-    static void setExampleField(Example e, Cell c) throws NoArticleException {
+    private static void setExampleField(Example e, Cell c) throws NoArticleException {
         switch (c.getColumnIndex()) {
             case 0 :
                 e.id = c.getStringCellValue();
-                break;
-            case 1 :
-                e.docid = c.getStringCellValue();
                 break;
             case 2 :
                 e.title = c.getStringCellValue();
@@ -71,16 +84,17 @@ public class spreadsheetParser {
                 e.labels.eventSentence = c.getStringCellValue();
                 break;
             case 4:
-                e.labels.bestGeolocation = c.getStringCellValue();
+                e.labels.bestGeopoint.name = c.getStringCellValue();
                 break;
             case 7:
-                e.labels.bestGeopoint = parseGeopoint(c.getStringCellValue());
+                parseGeopoint(c.getStringCellValue(),e.labels.bestGeopoint);
             case 8:
                 e.labels.country = c.getStringCellValue();
                 break;
             case 12:
                 try {
-                    e.article = c.getStringCellValue();
+                    String articleJSON = c.getStringCellValue();
+                    e.articles = extractArticles(articleJSON);
                 }
                 catch (IllegalStateException ex) {
                     throw new NoArticleException(c.getRowIndex());
@@ -93,12 +107,25 @@ public class spreadsheetParser {
         }
     }
 
-    static Geopoint parseGeopoint(String s) { //input is a string of the form "(double,double)"
+    private static ArrayList<String> extractArticles(String s) {
+        String[] splitStrings = s.split("\\{");
+        ArrayList<String> result = new ArrayList<>();
+        for (String s2: splitStrings) {
+            if ((s2.startsWith("\\\"body") || (s2.startsWith("\\body")))) {
+                String s3 = s2.substring(11);
+                String s4 = s3.split("\"url")[0];
+                result.add(s4);
+            }
+        }
+        return result;
+    }
+
+    private static void parseGeopoint(String s, Geopoint geopoint) { //input is a string of the form "(double,double)"
         String noBrackets = s.substring(1,s.length()-2);
         String[] coords = noBrackets.split(",");
-        Double longitude = Double.parseDouble(coords[0]);
-        Double latitude = Double.parseDouble(coords[1]);
-        return new Geopoint(longitude,latitude);
+        Double latitude = Double.parseDouble(coords[0]);
+        Double longitude = Double.parseDouble(coords[1]);
+        geopoint.setGeopoint(longitude,latitude);
     }
 
 }
