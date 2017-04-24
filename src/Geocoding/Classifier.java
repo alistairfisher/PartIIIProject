@@ -3,7 +3,6 @@ package Geocoding;
 import Geocoding.APIInterfaces.*;
 import Geocoding.Exceptions.NoNamedEntitiesException;
 import Geocoding.Exceptions.NoSuggestedLocationException;
-import Geocoding.NER.NER;
 import Geocoding.NER.NamedEntity;
 
 import java.util.ArrayList;
@@ -14,11 +13,11 @@ import java.util.ArrayList;
 public class Classifier {
 
     public static Geopoint findLocation(Example e) throws Exception {
-        String firstArticle = e.articles.get(0);
-        System.out.println(firstArticle);
-        ArrayList<NamedEntity> entities = NER.getLocations(firstArticle);
+        ArrayList<Token> firstArticle = e.articles.get(0);
+        Token.printTokens(firstArticle);
+        ArrayList<NamedEntity> entities = e.entities;
         if (entities.size()>0) {
-            NamedEntity firstLocation = NER.getLocations(firstArticle).get(0);
+            NamedEntity firstLocation = entities.get(0);
             System.out.println(firstLocation.name);
             String locationName = firstLocation.name;
             AutocompleteAPIResponse autocompleteAPIResponse = AutocompleteAPIInterface.response(stringForURL(locationName));

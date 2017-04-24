@@ -11,6 +11,4 @@ class Labels { //a class marking the labels of a training sample
 
     Geopoint[] candidateGeopoints;
 
-    String country;
-
 }

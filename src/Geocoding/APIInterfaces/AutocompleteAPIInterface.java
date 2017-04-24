@@ -2,6 +2,9 @@ package Geocoding.APIInterfaces;
 
 /**
  * Created by alistair on 27/01/2017.
+ *
+ * The class used to interact with the autocomplete API. A wrapper for APIInterface, inserting the correct URL and
+ * response type. The API uses a string to return a set of place ids, with associated locations.
  */
 public class AutocompleteAPIInterface extends APIInterface {
 

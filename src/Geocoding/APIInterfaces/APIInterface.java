@@ -11,6 +11,9 @@ import java.net.URL;
 
 /**
  * Created by alistair on 04/02/2017.
+ *
+ * Generic interface for interacting with Google Maps APIS. Contains the current API key and methods for making requests
+ * and converting the result from a JSON to a Java object.
  */
 abstract class APIInterface {
 

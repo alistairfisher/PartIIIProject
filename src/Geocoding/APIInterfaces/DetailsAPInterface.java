@@ -2,6 +2,9 @@ package Geocoding.APIInterfaces;
 
 /**
  * Created by alistair on 04/02/2017.
+ *
+ * A wrapper for APIInterface to interact with the Details API. Very similar to AutocompleteAPIInterface. The API uses a
+ * placeID to return a GPS location.
  */
 public class DetailsAPInterface extends APIInterface {
 

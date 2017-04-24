@@ -1,11 +1,12 @@
 package Geocoding.APIInterfaces;
 
-import Geocoding.Prediction;
-
 import java.util.List;
 
 /**
  * Created by alistair on 04/02/2017.
+ *
+ * The class used to represent responses from the Autocomplete API. It returns a status code and a list of Prediction
+ * objects, which encode places.
  */
 public class AutocompleteAPIResponse {
 

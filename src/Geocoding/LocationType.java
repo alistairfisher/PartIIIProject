@@ -5,6 +5,6 @@ package Geocoding;
  */
 public enum LocationType {
 
-    STREET,CITY,COUNTRY
+    NULL,STREET,CITY,COUNTRY
 
 }

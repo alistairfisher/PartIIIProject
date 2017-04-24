@@ -1,12 +1,14 @@
-package Geocoding;
+package Geocoding.APIInterfaces;
 
 /**
  * Created by alistair on 04/02/2017.
+ *
+ * Returned in calls to the Autocomplete API. Contains a place name, its unique ID and a list of properties.
  */
 public class Prediction {
 
     String description;
-    String place_id;
+    public String place_id;
     String[] types;
 
     public Prediction(String description, String place_id, String[] types) {

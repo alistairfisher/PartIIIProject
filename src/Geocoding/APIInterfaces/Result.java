@@ -7,6 +7,8 @@ import java.util.List;
 
 /**
  * Created by alistair on 05/02/2017.
+ *
+ * The main result from the Details API, contains a place name and its location.
  */
 public class Result {
 

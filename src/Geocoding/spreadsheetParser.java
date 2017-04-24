@@ -1,6 +1,8 @@
 package Geocoding;
 
 import Geocoding.Exceptions.NoArticleException;
+import Geocoding.NER.NER;
+import Geocoding.NER.NEROutput;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
@@ -62,7 +64,7 @@ class spreadsheetParser {
         return result;
     }
 
-    private static Example parseRow(Row row) throws NoArticleException {
+    private static Example parseRow(Row row) throws NoArticleException, Exception {
         Example result = new Example();
         Iterator<Cell> cellIterator = row.cellIterator();
         while (cellIterator.hasNext()) {
@@ -72,7 +74,7 @@ class spreadsheetParser {
         return result;
     }
 
-    private static void setExampleField(Example e, Cell c) throws NoArticleException {
+    private static void setExampleField(Example e, Cell c) throws NoArticleException, Exception {
         switch (c.getColumnIndex()) {
             case 0 :
                 e.id = c.getStringCellValue();
@@ -86,15 +88,27 @@ class spreadsheetParser {
             case 4:
                 e.labels.bestGeopoint.name = c.getStringCellValue();
                 break;
+            case 6:
+                e.labels.bestGeopoint.houseNumber = c.getBooleanCellValue();
+                break;
             case 7:
                 parseGeopoint(c.getStringCellValue(),e.labels.bestGeopoint);
             case 8:
-                e.labels.country = c.getStringCellValue();
+                e.labels.bestGeopoint.country = c.getStringCellValue();
                 break;
             case 12:
                 try {
                     String articleJSON = c.getStringCellValue();
-                    e.articles = extractArticles(articleJSON);
+                    ArrayList<String> strings =  extractArticles(articleJSON);
+                    ArrayList tokens = new ArrayList();
+                    ArrayList locations = new ArrayList();
+                    for (String s: strings) {
+                        NEROutput output = NER.getLocations(s);
+                        tokens.add(output.tokens);
+                        locations.addAll(output.entities);
+                    }
+                    e.articles = tokens;
+                    e.entities = locations;
                 }
                 catch (IllegalStateException ex) {
                     throw new NoArticleException(c.getRowIndex());
