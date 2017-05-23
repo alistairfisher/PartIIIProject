@@ -1,7 +1,7 @@
 package Geocoding.APIInterfaces;
 
-import Geocoding.AddressComponent;
-import Geocoding.Geopoint;
+import Geocoding.Main.AddressComponent;
+import Geocoding.Main.Geopoint;
 
 import java.util.List;
 
@@ -15,7 +15,7 @@ public class Result {
     List<AddressComponent> address_components;
     String icon;
     public String name;
-    Geometry geometry;
+    private Geometry geometry;
 
     public Geopoint getGeopoint() {
         double lat = Double.parseDouble(geometry.location.lat);

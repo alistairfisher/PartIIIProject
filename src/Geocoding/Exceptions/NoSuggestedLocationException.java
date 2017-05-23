@@ -7,7 +7,7 @@ package Geocoding.Exceptions;
  */
 public class NoSuggestedLocationException extends Exception {
 
-    public String locationName;
+    public final String locationName;
 
     public NoSuggestedLocationException(String locationName) {
         this.locationName = locationName;

@@ -1,6 +1,6 @@
 package Geocoding.APIInterfaces;
 
-import Geocoding.Keys;
+import Geocoding.Main.Keys;
 import com.google.gson.Gson;
 
 import java.io.BufferedReader;

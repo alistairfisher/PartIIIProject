@@ -1,4 +1,4 @@
-package Geocoding;
+package Geocoding.Main;
 
 import Geocoding.APIInterfaces.*;
 import Geocoding.Exceptions.NoNamedEntitiesException;
@@ -10,7 +10,7 @@ import java.util.ArrayList;
 /**
  * Created by alistair on 12/02/2017.
  */
-public class Classifier {
+class Classifier {
 
     public static Geopoint findLocation(Example e) throws Exception {
         ArrayList<Token> firstArticle = e.articles.get(0);
@@ -43,7 +43,7 @@ public class Classifier {
         }
     }
 
-    static String stringForURL (String input) {
+    private static String stringForURL(String input) {
         return input.replace(" ","%20");
     }
 

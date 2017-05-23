@@ -1,18 +1,20 @@
-package Geocoding;
+package Geocoding.Main;
 
 import Geocoding.APIInterfaces.APIQuotaException;
 import Geocoding.Exceptions.NoNamedEntitiesException;
 import Geocoding.Exceptions.NoSuggestedLocationException;
+import Geocoding.Main.Example;
+import Geocoding.Main.Geopoint;
+import Geocoding.Main.Main;
 
 import java.util.ArrayList;
-import java.util.List;
 
 /**
  * Created by alistair on 12/02/2017.
  */
-public class Testing {
+class Testing {
 
-    static Geopoint[] getLabelLocations(Example[] examples) {
+    private static Geopoint[] getLabelLocations(Example[] examples) {
         Geopoint[] labelLocations = new Geopoint[examples.length];
         for (int i=0;i<examples.length;i++) {
             try {
@@ -25,8 +27,8 @@ public class Testing {
         return labelLocations;
     }
 
-    static Geopoint[] getProposedLocations(Example[] examples) throws Exception {
-        List<Geopoint> accum = new ArrayList();
+    private static Geopoint[] getProposedLocations(Example[] examples) throws Exception {
+        ArrayList<Geopoint> accum = new ArrayList<>();
         for (int i=0;i<examples.length;i++) {
             try {
                 System.out.printf("%d: ",i);

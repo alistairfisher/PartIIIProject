@@ -7,7 +7,7 @@ package Geocoding.Exceptions;
  */
 public class NoArticleException extends Exception {
 
-    public int rowNumber;
+    public final int rowNumber;
 
     public NoArticleException(int rowNumber) {
         this.rowNumber = rowNumber;

@@ -1,4 +1,4 @@
-package Geocoding;
+package Geocoding.Main;
 
 /**
  * Created by alistair on 07/02/2017.

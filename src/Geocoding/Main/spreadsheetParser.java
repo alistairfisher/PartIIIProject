@@ -1,4 +1,4 @@
-package Geocoding;
+package Geocoding.Main;
 
 import Geocoding.Exceptions.NoArticleException;
 import Geocoding.NER.NER;
@@ -34,7 +34,11 @@ class spreadsheetParser {
             Iterator<Row> rowIterator = sheet.iterator();
             rowIterator.next(); //skip headings row
             while (rowIterator.hasNext()) {
+
                 Row row = rowIterator.next();
+                if (row.getRowNum() % 500 == 0) {
+                    System.out.printf("Parsed %d rows\n", row.getRowNum());
+                }
                 boolean fireRow;
                 try {
                     fireRow = row.getCell(19).getStringCellValue().equals("fire");
@@ -45,7 +49,7 @@ class spreadsheetParser {
                 if (fireRow) {
                     try {
                         Example example = parseRow(row);
-                        if (example.articles.size()>0) { //filter rows with no articles (there are around 4)
+                        if (example.articles.size()>0 && example.labels.location.sufficient) { //filter rows with no articles (there are around 4)
                             result.add(example);
                         }
                     }
@@ -64,7 +68,7 @@ class spreadsheetParser {
         return result;
     }
 
-    private static Example parseRow(Row row) throws NoArticleException, Exception {
+    private static Example parseRow(Row row) throws Exception {
         Example result = new Example();
         Iterator<Cell> cellIterator = row.cellIterator();
         while (cellIterator.hasNext()) {
@@ -74,7 +78,7 @@ class spreadsheetParser {
         return result;
     }
 
-    private static void setExampleField(Example e, Cell c) throws NoArticleException, Exception {
+    private static void setExampleField(Example e, Cell c) throws Exception {
         switch (c.getColumnIndex()) {
             case 0 :
                 e.id = c.getStringCellValue();
@@ -86,7 +90,10 @@ class spreadsheetParser {
                 e.labels.eventSentence = c.getStringCellValue();
                 break;
             case 4:
-                e.labels.bestGeopoint.name = c.getStringCellValue();
+                String originalLocation = c.getStringCellValue();
+                String fixed = originalLocation.replace(" Rd", " Road").replace(" St", " Street").replace(" Ave", " Avenue").replace(" Ln", " Lane");
+                e.labels.bestGeopoint.name = fixed;
+                e.labels.location = new Location(fixed);
                 break;
             case 6:
                 e.labels.bestGeopoint.houseNumber = c.getBooleanCellValue();
@@ -109,12 +116,14 @@ class spreadsheetParser {
                     }
                     e.articles = tokens;
                     e.entities = locations;
+                    if (e.articles.size() > 0 && e.labels.bestGeopoint.name != null) {
+                        Token.checkAddress(e.articles.get(0), e.labels.bestGeopoint.name, e.labels.location);
+                        Token.checkPosition(e.articles.get(0));
+                    }
+                    break;
                 }
                 catch (IllegalStateException ex) {
                     throw new NoArticleException(c.getRowIndex());
-                }
-                finally {
-                    break;
                 }
             default:
                 break;

@@ -8,8 +8,8 @@ import edu.stanford.nlp.ling.CoreLabel;
  */
 public class NamedEntity {
 
-    public String name;
-    NERTag tag;
+    public final String name;
+    final NERTag tag;
 
     private NamedEntity(String name, String tag) {
         this.name = name;

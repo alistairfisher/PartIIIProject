@@ -1,6 +1,6 @@
 package Geocoding.NER;
 
-import Geocoding.Token;
+import Geocoding.Main.Token;
 
 import java.util.ArrayList;
 
@@ -9,9 +9,9 @@ import java.util.ArrayList;
  */
 public class NEROutput {
 
-    public ArrayList<Token> tokens;
+    public final ArrayList<Token> tokens;
 
-    public ArrayList<NamedEntity> entities;
+    public final ArrayList<NamedEntity> entities;
 
     public NEROutput(ArrayList<Token> tokens, ArrayList<NamedEntity> entities) {
         this.tokens = tokens;

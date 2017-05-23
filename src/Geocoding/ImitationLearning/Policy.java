@@ -1,24 +1,35 @@
 package Geocoding.ImitationLearning;
 
-import Geocoding.Example;
+import Geocoding.Main.Example;
+import Geocoding.Main.Token;
 
+import java.awt.*;
 import java.util.ArrayList;
 
 /**
  * Created by alistair on 30/03/2017.
  */
-public class Policy {
+public abstract class Policy {
 
+  abstract boolean predict(ArrayList<Token> tokens, int currentPosition, ArrayList<Boolean> previousActions);
 
-    //a policy maps a token and a sequence of preceding actions to another token
+  ArrayList<Boolean> predict(ArrayList<Token> tokens, ArrayList<Boolean> actions) {
+      for (int i = actions.size(); i < tokens.size(); i++) {
+          boolean action = predict(tokens, i, actions);
+          actions.add(action);
+      }
+      return actions;
+  }
 
-    //the constructor that produces the expert policy
-    Policy(Prediction prediction) {
+  ArrayList<Boolean> predict(ArrayList<Token> tokens) {
+      return predict(tokens, new ArrayList<>());
+  }
 
-    }
-
-    Policy() {
-
-    }
+  ArrayList<Boolean> completePrediction(ArrayList<Token> tokens, ArrayList<Boolean> actions, boolean first) {
+      ArrayList<Boolean> copy = new ArrayList<>();
+      copy.addAll(actions);
+      copy.add(first);
+      return predict(tokens,actions);
+  }
 
 }

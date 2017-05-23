@@ -7,9 +7,9 @@ package Geocoding.APIInterfaces;
  */
 public class Prediction {
 
-    String description;
-    public String place_id;
-    String[] types;
+    private final String description;
+    public final String place_id;
+    private final String[] types;
 
     public Prediction(String description, String place_id, String[] types) {
         this.description = description;
